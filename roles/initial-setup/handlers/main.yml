@@ -9,14 +9,9 @@
     name: ufw
     state: restarted
 
-- name: Reload Fedora openssh-server
+- name: Reload openssh-server
   ansible.builtin.service:
     name: sshd
-    state: reloaded
-
-- name: Reload Debian openssh-server
-  ansible.builtin.service:
-    name: ssh
     state: reloaded
 
 - name: Restart systemd-journald
