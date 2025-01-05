@@ -121,7 +121,7 @@
     line: PasswordAuthentication no
     state: present
   notify:
-    - Reload openssh-server # TODO #3 same task but different notify for debian/fedora..
+    - Reload openssh-server
 
 - name: Disable remote Root login
   ansible.builtin.lineinfile:
@@ -130,9 +130,9 @@
     line: 'PermitRootLogin without-password'
     state: present
   notify:
-    - Reload openssh-server # TODO #3 same task but different notify for debian/fedora..
+    - Reload openssh-server
 
-- name: Allow SSH through ufw # TODO: firewalld does this wildy different...
+- name: Allow SSH through ufw
   community.general.ufw:
     state: enabled
     rule: allow
