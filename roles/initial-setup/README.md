@@ -38,7 +38,7 @@ If used in a bigger play, it's best to execute only the tags and therefore you f
 ```yaml
 - name: Initial system setup
   become: True
-  gather_facts: false
+  gather_facts: True
   hosts: fqdn.domain.ext
   vars:
     ansible_ssh_common_args: '-o StrictHostKeyChecking=no' # Optional by default the hostkey won't be checked
