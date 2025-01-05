@@ -169,11 +169,6 @@
     - Restart ufw
   when: ansible_os_family == "Debian"
 
-- name: Ensure locale en_US.UTF-8 is present # TODO: #5 Check this one and see what dep is needed
-  community.general.locale_gen:
-    name: en_US.UTF-8
-    state: present
-
 - name: Install fortune-mod
   ansible.builtin.package:
     name: fortune-mod
