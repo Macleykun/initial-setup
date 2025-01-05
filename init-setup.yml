@@ -1,6 +1,7 @@
 ---
 - name: Initial system setup
   gather_facts: False
+  become: True
   hosts: all # Yes please use the -l flag for this
   tasks:
     - name: Initial Ansible setup

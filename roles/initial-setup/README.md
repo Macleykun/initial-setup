@@ -37,6 +37,7 @@ If used in a bigger play, it's best to execute only the tags and therefore you f
 
 ```yaml
 - name: Initial system setup
+  become: True
   gather_facts: false
   hosts: fqdn.domain.ext
   vars:
