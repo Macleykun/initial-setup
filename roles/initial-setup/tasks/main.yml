@@ -2,28 +2,28 @@
 - name: Set {{ hostname }} as the hostname 
   ansible.builtin.hostname:
     name: "{{ hostname }}"
-  when: "{{ change_hostname }}"
+  when: change_hostname
 
 - name: Set hostname {{ hostname }} in hosts file # TODO: #2 Check with fedora, can this be expanded?
   ansible.builtin.lineinfile:
     path: /etc/hosts
     line: "127.0.1.1 {{ hostname }}"
     search_string: '127.0.1.1'
-  when: "{{ change_hostname }}"
+  when: change_hostname
 
 - name: Set hostname {{ hostname }} in hosts file
   ansible.builtin.lineinfile:
     path: /etc/hosts
     line: "127.0.0.1 localhost {{ hostname }}"
     search_string: '127.0.0.1'
-  when: "{{ change_hostname }}"
+  when: change_hostname
 
 - name: Set hostname {{ hostname }} in hosts file
   ansible.builtin.lineinfile:
     path: /etc/hosts
     line: "::1 ip6-localhost ip6-loopback {{ hostname }}"
     search_string: '::1 ip6-localhost ip6-loopback'
-  when: "{{ change_hostname }}"
+  when: change_hostname
 
 - name: Add default Administrators
   ansible.builtin.user:
@@ -104,14 +104,14 @@
     name:
       - ufw
     state: present
-  when: "{{ ansible_os_family }} == Debian"
+  when: ansible_os_family == "Debian"
 
 - name: Make sure firewalld is present
   ansible.builtin.package:
     name:
       - firewalld
     state: present
-  when: "{{ ansible_os_family }} == RedHat"
+  when: ansible_os_family == "RedHat"
 
 - name: Disable password login
   ansible.builtin.lineinfile:
@@ -138,7 +138,7 @@
     name: OpenSSH
   notify:
     - Restart ufw
-  when: "{{ ansible_os_family }} == Debian"
+  when: ansible_os_family == "Debian"
 
 - name: Allow SSH through firewalld
   ansible.posix.firewalld:
@@ -148,7 +148,7 @@
     state: enabled
     service: ssh
   notify: Reload firewalld
-  when: "{{ ansible_os_family }} == RedHat"
+  when: ansible_os_family == "RedHat"
 
 - name: Allow outgoing traffic
   community.general.ufw:
@@ -157,7 +157,7 @@
     policy: allow
   notify:
     - Restart ufw
-  when: "{{ ansible_os_family }} == Debian"
+  when: ansible_os_family == "Debian"
 
 - name: Deny incoming traffic
   community.general.ufw:
@@ -166,7 +166,7 @@
     policy: deny
   notify:
     - Restart ufw
-  when: "{{ ansible_os_family }} == Debian"
+  when: ansible_os_family == "Debian"
 
 - name: Ensure locale en_US.UTF-8 is present # TODO: #5 Check this one and see what dep is needed
   community.general.locale_gen:
@@ -190,14 +190,14 @@
     owner: root
     group: root
     mode: 0755
-  when: "{{ ansible_os_family }} == RedHat"
+  when: ansible_os_family == "RedHat"
 
 - name: Set max retenion journald # TODO: #4 skip this if it doesn't exist!
   ansible.builtin.lineinfile:
     line: MaxRetentionSec=3month
     path: /etc/systemd/journald.conf
   notify: Restart systemd-journald
-  when: "{{ ansible_os_family }} == Debian"
+  when: ansible_os_family == "Debian"
 
 - name: Configure default system
   ansible.builtin.include_tasks:
@@ -205,4 +205,4 @@
   loop:
     - motd.yml
     - autoupdate.yml
-  when: "{{ ansible_os_family }} == Debian"
+  when: ansible_os_family == "Debian"
