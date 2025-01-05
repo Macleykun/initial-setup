@@ -1,9 +1,4 @@
 ---
-- name: Install fortunemod
-  ansible.builtin.package:
-    name: fortune-mod
-    state: present
-
 - name: Install Figlet
   ansible.builtin.package:
     name: figlet
@@ -53,7 +48,7 @@
   loop_control:
     loop_var: copied_motd_files
 
-- name: At midnight check how many updates and security updates we have for motd
+- name: At midnight check how many updates and security updates we have for motd # TODO 
   ansible.builtin.cron:
     name: "Count updatable packages"
     minute: "0"

@@ -1,11 +1,7 @@
 ---
-#ansible-playbook init-setup.yml -l hostname (-k for password auth, first time)(--private-key="~/.ssh/id_ed25519_ansiblesetup.old" for custom private key auth)
 - name: Initial system setup
-  gather_facts: false
-  become: True
+  gather_facts: False
   hosts: all # Yes please use the -l flag for this
-  vars:
-    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
   tasks:
     - name: Initial Ansible setup
       ansible.builtin.import_role:

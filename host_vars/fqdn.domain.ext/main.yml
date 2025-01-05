@@ -1,5 +1,6 @@
 ---
 ansible_python_interpreter: /usr/bin/python3.13
+change_hostname: True
 administrators:
   - username: macley
     groups:
