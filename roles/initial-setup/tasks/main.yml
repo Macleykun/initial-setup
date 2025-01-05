@@ -55,8 +55,9 @@
   with_items:
     - "{{ administrators }}"
   loop_control:
-    label: "{{ admin_vimrc.username }}" 
+    label: "{{ admin_user.username }}" 
     loop_var: admin_user
+#  when: ansible_os_family == "Debian"
 
 - name: Setup .vimrc
   ansible.builtin.get_url:
