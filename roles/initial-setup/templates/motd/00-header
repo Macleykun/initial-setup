@@ -1,0 +1,3 @@
+#!/bin/sh
+os_desc=$(grep -i pretty /etc/*release | tr -d "'\"")
+printf "Welcome to %s (%s %s %s)\n" "${os_desc#*=}" "$(uname -o)" "$(uname -r)" "$(uname -m)"

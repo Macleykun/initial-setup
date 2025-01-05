@@ -1,0 +1,4 @@
+#!/bin/sh
+printf "\e[1;32;40m \n"
+figlet -f Alligator2 "{{ hostname }}" -k
+printf "\n\033[0m"

@@ -1,0 +1,17 @@
+---
+ansible_python_interpreter: /usr/bin/python3.13
+administrators:
+  - username: macley
+    groups:
+      - wheel
+    pub_key:
+      - ssh-ed25519 a comment
+      - ssh-rsa blabla 2cool4school
+  - username: eggman
+    pub_key:
+      - ssh-ed25519 IEEP commenttime
+  - username: faker
+    groups: wheel
+    shell: /bin/zsh
+    pub_key:
+      - ssh-rsa aa cooment

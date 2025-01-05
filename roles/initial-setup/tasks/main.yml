@@ -1,0 +1,200 @@
+---
+- name: Set {{ hostname }} as the hostname 
+  ansible.builtin.hostname:
+    name: "{{ hostname }}"
+
+- name: Set hostname {{ hostname }} in hosts file # TODO: Check with fedora, can this be expanded?
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    line: "127.0.1.1 {{ hostname }}"
+    search_string: '127.0.1.1'
+
+- name: Set hostname {{ hostname }} in hosts file
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    line: "127.0.0.1 localhost {{ hostname }}"
+    search_string: '127.0.0.1'
+
+- name: Set hostname {{ hostname }} in hosts file
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    line: "::1 ip6-localhost ip6-loopback {{ hostname }}"
+    search_string: '::1 ip6-localhost ip6-loopback'
+
+- name: Add default Administrators
+  ansible.builtin.user:
+    name: "{{ item.username }}"
+    shell: "{{ item.shell | default('/bin/bash') }}"
+    groups: "{{ item.groups | default(item.username) }}"
+    append: True
+    state: present
+    generate_ssh_key: yes
+    ssh_key_bits: 256
+    ssh_key_type: ed25519
+    ssh_key_file: .ssh/id_ed25519_ansiblesetup
+    update_password: on_create
+    password: "{{ 'ChAnGemeNOW' | password_hash('sha512') }}"
+  with_items:
+    - "{{ administrators }}"
+  loop_control:
+    label: "{{ item.username }}"
+  register: ssh_facts
+
+- name: Configure massupdate alias to fully update a system
+  ansible.builtin.lineinfile:
+    line: "alias massupdate='apt list --upgradable -a && sudo apt update && sudo apt upgrade -y && sudo apt dist-upgrade -y && sudo apt autoremove -y && sudo apt autoclean -y'"
+    path: "/home/{{ admin_user.username }}/.bash_aliases"
+    create: yes
+    mode: '0644'
+    owner: "{{ admin_user.username }}"
+    group: "{{ admin_user.username }}"
+  with_items:
+    - "{{ administrators }}"
+  loop_control:
+    label: "{{ admin_vimrc.username }}" 
+    loop_var: admin_user
+
+- name: Setup .vimrc
+  ansible.builtin.get_url:
+    url: https://gist.githubusercontent.com/Macleykun/a551d8b0a05c9a4fe96962ed364ab929/raw/9b15c47816c6916b51126c9bb99595495e365223/.vimrc 
+    dest: "/home/{{ admin_vimrc.username }}/.vimrc"
+    mode: '0644'
+    owner: "{{ admin_vimrc.username }}"
+    group: "{{ admin_vimrc.username }}"
+  with_items:
+    - "{{ administrators }}"
+  loop_control:
+    label: "{{ admin_vimrc.username }}"
+    loop_var: admin_vimrc
+
+- name: Create personal authorized_keys folder
+  ansible.builtin.lineinfile:
+    line: "{{ item.1 }}" # Could be more
+    dest: "/home/{{ item.0.username }}/.ssh/authorized_keys"
+    owner: "{{ item.0.username }}"
+    group: "{{ item.0.username }}"
+    mode: '0600'
+    create: yes
+  loop: "{{ administrators | subelements('pub_key', 'skip_missing=True') }}"
+  loop_control:
+    label: "{{ item.0.username }} {{ item.1 }}"
+
+- name: Set personal ansible keys
+  ansible.posix.authorized_key:
+    user: "{{ ssh_facts.results[index].name }}"
+    state: present
+    key: "{{ ssh_facts.results[index].ssh_public_key }}"
+  loop: "{{ ssh_facts.results }}"
+  loop_control:
+    label: "{{ ssh_facts.results[index].name }}"
+    index_var: index
+
+- name: Make sure openssh-server is present
+  ansible.builtin.package:
+    name: 
+      - openssh-server
+    state: present
+
+- name: Make sure ufw is present
+  ansible.builtin.package:
+    name:
+      - ufw
+    state: present
+
+- name: Make sure firewalld is present
+  ansible.builtin.package:
+    name:
+      - firewalld
+    state: present
+
+- name: Disable password login
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PasswordAuthentication'
+    line: PasswordAuthentication no
+    state: present
+  notify:
+    - Reload openssh-server # TODO same task but different notify for debian/fedora..
+
+- name: Disable remote Root login
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PermitRootLogin'
+    line: 'PermitRootLogin without-password'
+    state: present
+  notify:
+    - Reload openssh-server # TODO same task but different notify for debian/fedora..
+
+- name: Allow SSH through ufw # TODO: firewalld does this wildy different...
+  community.general.ufw:
+    state: enabled
+    rule: allow
+    name: OpenSSH
+  notify:
+    - Restart ufw
+
+- name: Allow SSH through firewalld
+  ansible.posix.firewalld:
+    zone: public
+    immediate: true
+    permanent: true
+    state: enabled
+    service: ssh
+  notify: Reload firewalld
+
+- name: Allow outgoing traffic
+  community.general.ufw:
+    state: enabled
+    direction: outgoing
+    policy: allow
+  notify:
+    - Restart ufw
+
+- name: Deny incoming traffic
+  community.general.ufw:
+    state: enabled
+    direction: incoming
+    policy: deny
+  notify:
+    - Restart ufw
+
+- name: Ensure locale en_US.UTF-8 is present
+  community.general.locale_gen:
+    name: en_US.UTF-8
+    state: present
+
+- name: Install fortune-mod
+  ansible.builtin.package:
+    name: fortune-mod
+    state: present
+
+- name: Remove static motd file
+  ansible.builtin.file:
+    path: /etc/motd
+    state: absent
+
+- name: Copy own motd scripts over
+  ansible.builtin.copy:
+    src: "motd.sh"
+    dest: "/etc/profile.d/motd.sh"
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Make python refer to python3 # TODO: check if this is needed on 24.04 or even 22.04
+  ansible.builtin.package:
+    name: python-is-python3
+    state: present
+
+- name: Set max retenion journald # TODO: skip thsi if it doesn't exist!
+  ansible.builtin.lineinfile:
+    line: MaxRetentionSec=3month
+    path: /etc/systemd/journald.conf
+  notify: Restart systemd-journald
+
+- name: Configure default system
+  ansible.builtin.include_tasks:
+    file: "tasks/{{ item }}"
+  loop:
+    - motd.yml
+    - autoupdate.yml

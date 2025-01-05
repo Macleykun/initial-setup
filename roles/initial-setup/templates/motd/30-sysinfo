@@ -1,0 +1,74 @@
+#!/bin/bash
+
+# Calulate CPU usage and core count
+cpu_usage=$(awk '{print $2}' /proc/loadavg)
+cpu_count=$(nproc --all)
+
+# Check if current usage isn't to high, else don't display the motd
+if [[ ${cpu_usage%.*} -ge ${cpu_count} ]];
+then
+  printf "motd disabled because current usage is %s\n" "$cpu_usage"
+else
+  date=$(date)
+
+  # We use df to display the filesystems and use awk to get the usage and path and reverse sort so the top line is the fullest
+  highest_usage_full=$(df | awk 'NR>1 {print $5 " " $6 | "sort -nr -k1"}' | head -n1)
+  name_highest_usage=$(echo $highest_usage_full | awk '{print $2}')
+  percentage_highest_usage=$(echo $highest_usage_full | awk '{print $1}')
+
+  # Use awk to get and calculate the percentage usage against the total amount of memory
+  memory_usage=$(awk '/MemT/{t=$2} /MemA/{printf "%.f%%", (1-$2/t)*100}' /proc/meminfo)
+  users=$(users | wc -w)
+
+  # Try to display the amount of uptime in minutes, if over 59 minutes show amount of hours, and after 23 hours show amount of days. However it now shows the 5 minutes as 5 hours...
+  uptime=$(uptime | sed -E 's/^[^,]*up *//; s/, *[[:digit:]]* users.*//; s/min/minutes/; s/([[:digit:]]+):0?([[:digit:]]+)/\1 hours, \2 minutes/'| awk '{print $1,$2}' | tr -d ,)
+  processes=$(ps -e --no-headers | wc -l)
+  ip=$(ip -4 a show scope global | awk '/inet/ {print $2; exit}')
+  ipv6=$(ip -6 a show scope global | awk '/inet/ {print $2; exit}')
+  packages=$(dpkg-query -l | grep -c "^ii")
+
+  # The updates and secupdates var get's it's info thanks to this command
+  # sudo apt-get -s dist-upgrade | grep "^Inst" | wc -l > /etc/update-motd.d/pkg.stats && apt-get -s dist-upgrade | grep "^Inst" | grep -i security | wc -l >> /etc/update-motd.d/pkg.stats
+  # One-liner to add to crontab
+  # sudo crontab -l | { cat; echo "0 0 * * * apt-get -s dist-upgrade | grep "^Inst" | wc -l > /etc/update-motd.d/pkg.stats && apt-get -s dist-upgrade | grep "^Inst" | grep -i security | wc -l >> /etc/update-motd.d/pkg.stats"; } | crontab -
+  updates=$(head -n1 /etc/update-motd.d/pkg.stats)
+  secupdates=$(tail -n1 /etc/update-motd.d/pkg.stats)
+
+  # If you don't want to use a cronjob, you can comment the above 2 and uncomment the below 3. Will take a few 100ms longer on raspberry pi's
+#  aptlist=$(apt list --upgradable 2> /dev/null | sed 1d)
+#  updates=$(echo "${aptlist}" | awk NF | wc -l)
+#  secupdates=$(echo "${aptlist}" | grep -c security)
+
+  # We calulcate everything beforehand, so that this part is consistently and easy to follow
+  echo "System information as of: $date"
+  echo
+  printf "System Load:\t%s/%s\tSystem Uptime:\t%s\n" "$cpu_usage" "$cpu_count" "$uptime"
+  printf "Memory Usage:\t%s\tIP Address:\t%s\n" "$memory_usage" "$ip"
+  if [[ $ipv6 == "" ]]
+  then
+    printf "Usage On /:\t%s\tIPv6 Addres:\tNo ipv6 address found\n" "$root_usage"
+  else
+    printf "Use %s:\t%s\tIPv6 Addres:\t%s\n" "$name_highest_usage" "$percentage_highest_usage" "$ipv6"
+  fi
+  printf "Local Users:\t%s\tProcesses:\t%s\n" "$users" "$processes"
+  printf "Packages dpkg:\t%s\tSession fortune:\ \n\n" "$packages"
+
+  /usr/games/fortune
+fi
+
+# Check if there are updates
+echo
+if [[ $updates != 0 ]]
+then
+  printf "%s updates can be installed immediately.\n" "$updates"
+  printf "%s of these updates are security updates.\n" "$secupdates"
+  printf "To see these additional updates run: apt list --upgradable\n\n"
+else
+  printf "System is up-to-date!\n\n"
+fi
+
+# Check if a reboot is needed
+if [[ -f /var/run/reboot-required ]]
+then
+  echo '*** System restart required ***'
+fi

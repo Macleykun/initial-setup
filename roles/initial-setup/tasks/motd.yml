@@ -1,0 +1,61 @@
+---
+- name: Install fortunemod
+  ansible.builtin.package:
+    name: fortune-mod
+    state: present
+
+- name: Install Figlet
+  ansible.builtin.package:
+    name: figlet
+    state: present
+  when: motd_type == "Alligator2"
+
+- name: Download necassary Alligator2 font
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/xero/figlet-fonts/master/Alligator2.flf
+    dest: /usr/share/figlet/Alligator2.flf
+    owner: root
+    group: root
+    mode: '0644'
+  when: motd_type == "Alligator2"
+
+- name: Remove static motd file
+  ansible.builtin.file:
+    path: /etc/motd
+    state: absent
+
+- name: Disable a few default motd scripts to allow own motd script
+  ansible.builtin.file:
+    path: "{{ disabled_motd_files }}"
+    state: absent
+  with_items:
+    - /etc/update-motd.d/10-help-text
+    - /etc/update-motd.d/50-motd-news
+    - /etc/update-motd.d/50-landscape-sysinfo
+    - /etc/update-motd.d/98-reboot-required
+  loop_control:
+    loop_var: disabled_motd_files
+
+- name: Copy own motd scripts over
+  ansible.builtin.template:
+    src: "{{ copied_motd_files.src }}"
+    dest: "{{ copied_motd_files.dest }}"
+    owner: root
+    group: root
+    mode: 0755
+  with_items:
+    - src: "motds/20-hostname-{{ motd_type }}"
+      dest: /etc/update-motd.d/20-hostname
+    - src: motd/30-sysinfo
+      dest: /etc/update-motd.d/30-sysinfo
+    - src: "motd/00-header"
+      dest: /etc/update-motd.d/00-header
+  loop_control:
+    loop_var: copied_motd_files
+
+- name: At midnight check how many updates and security updates we have for motd
+  ansible.builtin.cron:
+    name: "Count updatable packages"
+    minute: "0"
+    hour: "0"
+    job: "apt-get -s dist-upgrade | grep ^Inst | wc -l > /etc/update-motd.d/pkg.stats && apt-get -s dist-upgrade | grep ^Inst | grep -i security | wc -l >> /etc/update-motd.d/pkg.stats"

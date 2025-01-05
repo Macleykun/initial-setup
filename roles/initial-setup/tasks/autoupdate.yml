@@ -1,0 +1,29 @@
+---
+- name: Install unattended-upgrades
+  ansible.builtin.package:
+    name: unattended-upgrades
+    state: present
+
+- name: Set auto download and clean on
+  ansible.builtin.blockinfile:
+    path: /etc/apt/apt.conf.d/20auto-upgrades
+    block: |
+      APT::Periodic::Update-Package-Lists "1";
+      APT::Periodic::Unattended-Upgrade "1";
+      APT::Periodic::Download-Upgradeable-Packages "1";
+      APT::Periodic::AutocleanInterval "7";
+    create: True
+
+- name: Allow all origins to upgrade all packages automatically
+  ansible.builtin.blockinfile:
+    path: /etc/apt/apt.conf.d/50unattended-upgrades
+    block: |
+      Unattended-Upgrade::Origins-Pattern {
+        "o=*";
+      }
+      Unattended-Upgrade::Remove-Unused-Kernel-Packages "true";
+      Unattended-Upgrade::Remove-New-Unused-Dependencies "true";
+      Unattended-Upgrade::Remove-Unused-Dependencies "true";
+      Unattended-Upgrade::Automatic-Reboot "false";
+# sudo unattended-upgrades --dry-run --debug
+# sudo cat /var/log/unattended-upgrades/unattended-upgrades.log
