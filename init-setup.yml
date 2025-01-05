@@ -1,6 +1,6 @@
 ---
 - name: Initial system setup
-  gather_facts: False
+  gather_facts: True
   become: True
   hosts: all # Yes please use the -l flag for this
   tasks:
