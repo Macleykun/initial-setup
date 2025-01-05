@@ -57,7 +57,7 @@
   loop_control:
     label: "{{ admin_user.username }}" 
     loop_var: admin_user
-#  when: ansible_os_family == "Debian"
+  when: ansible_os_family == "Debian"
 
 - name: Setup .vimrc
   ansible.builtin.get_url:
