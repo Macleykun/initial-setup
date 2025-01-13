@@ -59,7 +59,7 @@
     loop_var: admin_user
   when: ansible_os_family == "Debian"
 
-- name: Setup .vimrc
+- name: Setup .vimrc # TODO also set vimrc for root
   ansible.builtin.get_url:
     url: https://gist.githubusercontent.com/Macleykun/a551d8b0a05c9a4fe96962ed364ab929/raw/9b15c47816c6916b51126c9bb99595495e365223/.vimrc 
     dest: "/home/{{ admin_vimrc.username }}/.vimrc"
@@ -118,6 +118,7 @@
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
     regexp: '^PasswordAuthentication'
+    insertafter: '^#PasswordAuthentication'
     line: PasswordAuthentication no
     state: present
   notify:
@@ -127,6 +128,7 @@
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
     regexp: '^PermitRootLogin'
+    insertafter: '^#PermitRootLogin'
     line: 'PermitRootLogin prohibit-password'
     state: present
   notify:
@@ -190,7 +192,8 @@
 
 - name: Set max retenion journald # TODO: #4 skip this if it doesn't exist!
   ansible.builtin.lineinfile:
-    line: MaxRetentionSec=3month
+    line: 'MaxRetentionSec=3month'
+    insertafter: '^#MaxRetentionSec=3month'
     path: /etc/systemd/journald.conf
   notify: Restart systemd-journald
   when: ansible_os_family == "Debian"
