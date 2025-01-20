@@ -59,7 +59,17 @@
     loop_var: admin_user
   when: ansible_os_family == "Debian"
 
-- name: Setup .vimrc # TODO also set vimrc for root
+- name: Configure massupdate alias for root to fully update a system
+  ansible.builtin.lineinfile:
+    line: "alias massupdate='apt list --upgradable -a && sudo apt update && sudo apt upgrade -y && sudo apt dist-upgrade -y && sudo apt autoremove -y && sudo apt autoclean -y'"
+    path: "/root/.bash_aliases"
+    create: yes
+    mode: '0644'
+    owner: "root"
+    group: "root"
+  when: ansible_os_family == "Debian"
+
+- name: Setup .vimrc
   ansible.builtin.get_url:
     url: https://gist.githubusercontent.com/Macleykun/a551d8b0a05c9a4fe96962ed364ab929/raw/9b15c47816c6916b51126c9bb99595495e365223/.vimrc 
     dest: "/home/{{ admin_vimrc.username }}/.vimrc"
@@ -71,6 +81,14 @@
   loop_control:
     label: "{{ admin_vimrc.username }}"
     loop_var: admin_vimrc
+
+- name: Setup .vimrc for root
+  ansible.builtin.get_url:
+    url: https://gist.githubusercontent.com/Macleykun/a551d8b0a05c9a4fe96962ed364ab929/raw/9b15c47816c6916b51126c9bb99595495e365223/.vimrc 
+    dest: "/root/.vimrc"
+    mode: '0644'
+    owner: "root"
+    group: "root"
 
 - name: Create personal authorized_keys folder
   ansible.builtin.lineinfile:
