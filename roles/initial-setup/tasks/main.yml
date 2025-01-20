@@ -168,10 +168,12 @@
     - Restart ufw
   when: ansible_os_family == "Debian"
 
-- name: Configure default system
+- name: Configure apt auto-update
   ansible.builtin.include_tasks:
-    file: "tasks/{{ item }}"
-  loop:
-    - motd.yml
-    - autoupdate.yml
+    file: "tasks/autoupdate.yml"
   when: ansible_os_family == "Debian"
+
+- name: Configure motd
+  ansible.builtin.include_tasks:
+    file: "tasks/motd.yml"
+  tag: test
