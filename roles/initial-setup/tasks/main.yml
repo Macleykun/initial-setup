@@ -168,25 +168,6 @@
     - Restart ufw
   when: ansible_os_family == "Debian"
 
-- name: Install fortune-mod
-  ansible.builtin.package:
-    name: fortune-mod
-    state: present
-
-- name: Remove static motd file
-  ansible.builtin.file:
-    path: /etc/motd
-    state: absent
-
-- name: Copy own motd scripts over
-  ansible.builtin.copy:
-    src: "motd.sh"
-    dest: "/etc/profile.d/motd.sh"
-    owner: root
-    group: root
-    mode: 0755
-  when: ansible_os_family == "RedHat"
-
 - name: Configure default system
   ansible.builtin.include_tasks:
     file: "tasks/{{ item }}"

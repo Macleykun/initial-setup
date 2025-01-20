@@ -5,6 +5,11 @@
     state: present
   when: motd_type == "Alligator2"
 
+- name: Install fortune-mod
+  ansible.builtin.package:
+    name: fortune-mod
+    state: present
+
 - name: Download necassary Alligator2 font
   ansible.builtin.get_url:
     url: https://raw.githubusercontent.com/xero/figlet-fonts/master/Alligator2.flf
@@ -30,8 +35,9 @@
     - /etc/update-motd.d/98-reboot-required
   loop_control:
     loop_var: disabled_motd_files
+  when: ansible_os_family == "Debian"
 
-- name: Copy own motd scripts over
+- name: Copy own motd scripts over for Debian
   ansible.builtin.template:
     src: "{{ copied_motd_files.src }}"
     dest: "{{ copied_motd_files.dest }}"
@@ -47,6 +53,23 @@
       dest: /etc/update-motd.d/00-header
   loop_control:
     loop_var: copied_motd_files
+  when: ansible_os_family == "Debian"
+
+- name: Copy own motd scripts over for Fedora
+  ansible.builtin.template:
+    src: "{{ copied_motd_files.src }}"
+    dest: "{{ copied_motd_files.dest }}"
+    owner: root
+    group: root
+    mode: 0755
+  with_items:
+    - src: "motd/fedora-motd.sh"
+      dest: "/etc/profile.d/motd.sh"
+    - src: "motd/20-hostname-{{ motd_type }}"
+      dest: "/etc/profile.d/motd-art.sh"
+  loop_control:
+    loop_var: copied_motd_files
+  when: ansible_os_family == "RedHat"
 
 - name: At midnight check how many updates and security updates we have for motd # TODO 
   ansible.builtin.cron:
@@ -54,3 +77,4 @@
     minute: "0"
     hour: "0"
     job: "apt-get -s dist-upgrade | grep ^Inst | wc -l > /etc/update-motd.d/pkg.stats && apt-get -s dist-upgrade | grep ^Inst | grep -i security | wc -l >> /etc/update-motd.d/pkg.stats"
+  when: ansible_os_family == "Debian"

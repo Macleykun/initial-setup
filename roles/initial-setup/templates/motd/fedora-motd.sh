@@ -2,14 +2,8 @@ if [[ "${USER}" != "root" ]]; then
         os_desc=$(grep -i pretty /etc/*release | tr -d "'\"")
         printf "Welcome to %s (%s %s %s)\n" "${os_desc#*=}" "$(uname -o)" "$(uname -r)" "$(uname -m)"
 
-
-        echo "                    ___.                  "
-        echo "  ___________   ____\_ |__  __ __  ______ "
-        echo "_/ __ \_  __ \_/ __ \| __ \|  |  \/  ___/ "
-        echo "\  ___/|  | \/\  ___/| \_\ \  |  /\___ \  "
-        echo " \___  >__|    \___  >___  /____//____  > "
-        echo "     \/            \/    \/           \/  "
-        echo
+        # Show ascii art
+        /etc/profile.d/motd-art.sh
 
         # Calulate CPU usage and core count
         cpu_usage=$(awk '{print $2}' /proc/loadavg)
