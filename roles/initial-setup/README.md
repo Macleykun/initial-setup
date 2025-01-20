@@ -10,7 +10,6 @@ Role Variables
 Use the following to setup a user as admin with their own public key so they can remote login.
 ```yml
 change_hostname: False # Optional by default False
-hostname: fqdn # Optional but required if change_hostname is True (TODO: #1 in the future ansible_hostname will be used)
 administrators:
   - username: macley
     groups: # Optional else the user will be added to their own group only
@@ -43,7 +42,6 @@ If used in a bigger play, it's best to execute only the tags and therefore you f
   vars:
     ansible_ssh_common_args: '-o StrictHostKeyChecking=no' # Optional by default the hostkey won't be checked
     change_hostname: False # Optional by default False
-    hostname: fqdn
     administrators:
       - username: macley
         groups: # Optional else the user will be added to their own group only
