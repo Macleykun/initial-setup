@@ -169,11 +169,11 @@
   when: ansible_os_family == "Debian"
 
 - name: Configure apt auto-update
-  ansible.builtin.include_tasks:
+  ansible.builtin.import_tasks:
     file: "tasks/autoupdate.yml"
   when: ansible_os_family == "Debian"
 
 - name: Configure motd
-  ansible.builtin.include_tasks:
+  ansible.builtin.import_tasks:
     file: "tasks/motd.yml"
   tags: test
