@@ -187,14 +187,6 @@
     mode: 0755
   when: ansible_os_family == "RedHat"
 
-- name: Set max retenion journald # TODO: #4 skip this if it doesn't exist!
-  ansible.builtin.lineinfile:
-    line: 'MaxRetentionSec=3month'
-    insertafter: '^#MaxRetentionSec=3month'
-    path: /etc/systemd/journald.conf
-  notify: Restart systemd-journald
-  when: ansible_os_family == "Debian"
-
 - name: Configure default system
   ansible.builtin.include_tasks:
     file: "tasks/{{ item }}"
