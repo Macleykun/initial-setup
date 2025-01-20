@@ -66,7 +66,7 @@
     - src: "motd/fedora-motd.sh"
       dest: "/etc/profile.d/motd.sh"
     - src: "motd/20-hostname-{{ motd_type }}"
-      dest: "/etc/profile.d/motd-art.sh"
+      dest: "/etc/profile.d/motd.art"
   loop_control:
     loop_var: copied_motd_files
   when: ansible_os_family == "RedHat"

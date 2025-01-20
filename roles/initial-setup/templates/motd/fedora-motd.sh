@@ -3,7 +3,7 @@ if [[ "${USER}" != "root" ]]; then
         printf "Welcome to %s (%s %s %s)\n" "${os_desc#*=}" "$(uname -o)" "$(uname -r)" "$(uname -m)"
 
         # Show ascii art
-        /etc/profile.d/motd-art.sh
+        /etc/profile.d/motd.art
 
         # Calulate CPU usage and core count
         cpu_usage=$(awk '{print $2}' /proc/loadavg)
