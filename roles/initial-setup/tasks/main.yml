@@ -1,24 +1,24 @@
 ---
-- name: Set {{ hostname }} as the hostname 
+- name: Set {{ inventory_hostname }} as the hostname for {{ ansible_nodename }}
   ansible.builtin.hostname:
-    name: "{{ hostname }}"
+    name: "{{ inventory_hostname }}"
   when: change_hostname
 
-- name: Set hostname {{ hostname }} in hosts file # TODO: #2 Check with fedora, can this be expanded?
+- name: Set hostname {{ ansible_nodename }} in hosts file # TODO: #2 Check with fedora, can this be expanded?
   ansible.builtin.lineinfile:
     path: /etc/hosts
     line: "127.0.1.1 {{ hostname }}"
     search_string: '127.0.1.1'
   when: change_hostname
 
-- name: Set hostname {{ hostname }} in hosts file
+- name: Set hostname {{ ansible_nodename }} in hosts file
   ansible.builtin.lineinfile:
     path: /etc/hosts
     line: "127.0.0.1 localhost {{ hostname }}"
     search_string: '127.0.0.1'
   when: change_hostname
 
-- name: Set hostname {{ hostname }} in hosts file
+- name: Set hostname {{ ansible_nodename }} in hosts file
   ansible.builtin.lineinfile:
     path: /etc/hosts
     line: "::1 ip6-localhost ip6-loopback {{ hostname }}"
