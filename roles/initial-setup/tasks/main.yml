@@ -176,4 +176,3 @@
 - name: Configure motd
   ansible.builtin.import_tasks:
     file: "tasks/motd.yml"
-  tags: test
