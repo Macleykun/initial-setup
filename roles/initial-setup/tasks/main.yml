@@ -176,4 +176,4 @@
 - name: Configure motd
   ansible.builtin.include_tasks:
     file: "tasks/motd.yml"
-  tag: test
+  tags: test
