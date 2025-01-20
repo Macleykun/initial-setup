@@ -37,8 +37,7 @@ if [[ "${USER}" != "root" ]]; then
           #secupdates=$(tail -n1 /etc/update-motd.d/pkg.stats)
 
           # We calulcate everything beforehand, so that this part is consistently and easy to follow
-          echo "System information as of: $date"
-          echo
+          echo -e "\e[4mSystem information as of: $date\e[0m"
           printf "System Load:\t%s/%s\tSystem Uptime:\t%s\n" "$cpu_usage" "$cpu_count" "$uptime"
           printf "Memory Usage:\t%s\tIP Address:\t%s\n" "$memory_usage" "$ip"
           if [[ $ipv6 == "" ]]
