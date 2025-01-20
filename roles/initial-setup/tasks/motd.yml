@@ -71,7 +71,7 @@
     loop_var: copied_motd_files
   when: ansible_os_family == "RedHat"
 
-- name: At midnight check how many updates and security updates we have for motd # TODO 
+- name: At midnight check how many updates and security updates we have for motd
   ansible.builtin.cron:
     name: "Count updatable packages"
     minute: "0"
