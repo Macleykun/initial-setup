@@ -39,7 +39,7 @@
     group: root
     mode: 0755
   with_items:
-    - src: "motds/20-hostname-{{ motd_type }}"
+    - src: "motd/20-hostname-{{ motd_type }}"
       dest: /etc/update-motd.d/20-hostname
     - src: motd/30-sysinfo
       dest: /etc/update-motd.d/30-sysinfo
