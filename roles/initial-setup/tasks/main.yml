@@ -3,6 +3,7 @@
   ansible.builtin.hostname:
     name: "{{ inventory_hostname }}"
   when: change_hostname
+  tags: change_hostname
 
 - name: Add default Administrators
   ansible.builtin.user:
@@ -22,6 +23,7 @@
   loop_control:
     label: "{{ item.username }}"
   register: ssh_facts
+  tags: setup_users
 
 - name: Configure massupdate alias to fully update a system
   ansible.builtin.lineinfile:
@@ -37,6 +39,7 @@
     label: "{{ admin_user.username }}" 
     loop_var: admin_user
   when: ansible_os_family == "Debian"
+  tags: setup_users
 
 - name: Configure massupdate alias for root to fully update a system
   ansible.builtin.lineinfile:
@@ -47,6 +50,7 @@
     owner: "root"
     group: "root"
   when: ansible_os_family == "Debian"
+  tags: setup_users
 
 - name: Setup .vimrc
   ansible.builtin.get_url:
@@ -60,6 +64,7 @@
   loop_control:
     label: "{{ admin_vimrc.username }}"
     loop_var: admin_vimrc
+  tags: setup_users
 
 - name: Setup .vimrc for root
   ansible.builtin.get_url:
@@ -68,6 +73,7 @@
     mode: '0644'
     owner: "root"
     group: "root"
+  tags: setup_users
 
 - name: Create personal authorized_keys folder
   ansible.builtin.lineinfile:
@@ -80,6 +86,7 @@
   loop: "{{ administrators | subelements('pub_key', 'skip_missing=True') }}"
   loop_control:
     label: "{{ item.0.username }} {{ item.1 }}"
+  tags: setup_users
 
 - name: Set personal ansible keys
   ansible.posix.authorized_key:
@@ -89,6 +96,7 @@
   loop: "{{ ssh_facts.results }}"
   loop_control:
     label: "{{ ssh_facts.results[index].name }}"
+  tags: setup_users
     index_var: index
 
 - name: Make sure openssh-server is present
@@ -96,6 +104,7 @@
     name: 
       - openssh-server
     state: present
+  tags: setup_ssh
 
 - name: Make sure ufw is present
   ansible.builtin.package:
@@ -103,6 +112,7 @@
       - ufw
     state: present
   when: ansible_os_family == "Debian"
+  tags: setup_ssh
 
 - name: Make sure firewalld is present
   ansible.builtin.package:
@@ -110,6 +120,7 @@
       - firewalld
     state: present
   when: ansible_os_family == "RedHat"
+  tags: setup_ssh
 
 - name: Disable password login
   ansible.builtin.lineinfile:
@@ -120,6 +131,7 @@
     state: present
   notify:
     - Reload openssh-server
+  tags: setup_ssh
 
 - name: Disable remote Root login
   ansible.builtin.lineinfile:
@@ -130,6 +142,7 @@
     state: present
   notify:
     - Reload openssh-server
+  tags: setup_ssh
 
 - name: Allow SSH through ufw
   community.general.ufw:
@@ -139,6 +152,7 @@
   notify:
     - Restart ufw
   when: ansible_os_family == "Debian"
+  tags: setup_ssh
 
 - name: Allow SSH through firewalld
   ansible.posix.firewalld:
@@ -149,6 +163,7 @@
     service: ssh
   notify: Reload firewalld
   when: ansible_os_family == "RedHat"
+  tags: setup_ssh
 
 - name: Allow outgoing traffic
   community.general.ufw:
@@ -158,6 +173,7 @@
   notify:
     - Restart ufw
   when: ansible_os_family == "Debian"
+  tags: setup_ssh
 
 - name: Deny incoming traffic
   community.general.ufw:
@@ -167,12 +183,15 @@
   notify:
     - Restart ufw
   when: ansible_os_family == "Debian"
+  tags: setup_ssh
 
 - name: Configure apt auto-update
   ansible.builtin.import_tasks:
     file: "tasks/autoupdate.yml"
   when: ansible_os_family == "Debian"
+  tags: setup_auto-update
 
 - name: Configure motd
   ansible.builtin.import_tasks:
     file: "tasks/motd.yml"
+  tags: setup_motd

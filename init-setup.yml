@@ -2,7 +2,7 @@
 - name: Initial system setup
   gather_facts: True
   become: True
-  hosts: all # Yes please use the -l flag for this
+  hosts: all # Use the -l flag to limit which hosts you want to run against
   tasks:
     - name: Initial Ansible setup
       ansible.builtin.import_role:
