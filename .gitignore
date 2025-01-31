@@ -5,4 +5,3 @@ collections/
 hosts.ini
 !host_vars/fqdn.domain.ext/
 host_vars/*
-ansible.cfg
