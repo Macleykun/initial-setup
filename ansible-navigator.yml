@@ -97,7 +97,7 @@ ansible-navigator:
 #         KEY2: VALUE2
 #         KEY3: VALUE3
 #     # Specify the name of the execution environment image
-      image: registry.redhat.io/ansible-automation-platform-25/ee-supported-rhel9
+      image: ghcr.io/macleykun/ansible-ee-alpine:main
       pull:
 #       # Specify any additional parameters that should be added to the pull
 #       # command when pulling an execution environment from a container
