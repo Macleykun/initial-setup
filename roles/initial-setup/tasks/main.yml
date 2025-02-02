@@ -96,8 +96,8 @@
   loop: "{{ ssh_facts.results }}"
   loop_control:
     label: "{{ ssh_facts.results[index].name }}"
-  tags: setup_users
     index_var: index
+  tags: setup_users
 
 - name: Make sure openssh-server is present
   ansible.builtin.package:
