@@ -111,10 +111,10 @@ ansible-navigator:
         policy: missing
 #     # Specify volume to be bind mounted within an execution environment
 #     # (--eev /home/user/test:/home/user/test:Z)
-#     volume-mounts:
-#       - src: "/tmp/directory"
-#         dest: "/tmp/directory"
-#         options: "Z"
+      volume-mounts: # Mount private keys and host fingerprints
+        - src: "~/.ssh"
+          dest: "/home/ansible/.ssh"
+          options: "Z"
 #   # Specify the format for stdout output.
 #   format: json
 #   images:
