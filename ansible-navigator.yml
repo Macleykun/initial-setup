@@ -137,7 +137,7 @@ ansible-navigator:
 #     # Specify the full path for the ansible-navigator log file
       file: /dev/null
 #   # Specify the user-interface mode
-    #mode: interactive
+    mode: stdout # To view collections: ansible-navigator collections -m interactive
     playbook-artifact:
       # Enable or disable the creation of artifacts for completed playbooks.
 #     # Note: not compatible with '--mode stdout' when playbooks require user
