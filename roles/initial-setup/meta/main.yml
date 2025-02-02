@@ -16,3 +16,4 @@ galaxy_info:
 
 dependencies:
   "ansible.posix": "*" # latest
+  "community.general": "*" # latest
