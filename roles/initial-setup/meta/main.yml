@@ -1,22 +1,18 @@
 galaxy_info:
   author: Macley
   description: Setup a Fedora and Debian server with users (and their groups, shells and public keys), userfriendly vimrc config, secure ssh and configure default best practises for host firewall, auto apt updating and cool motd!
-  company: your company (optional)
 
   license: MIT
 
-  min_ansible_version: 2.1
+  min_ansible_version: 2.16 # I had to because you want to support python3.12 default linux hosts right?
 
-  # TODO: #9 check if this role works well in ansible-navigator and if so, define which version of ansible (NOT 2.14 ugh)
-  # min_ansible_container_version:
-
-platforms:
-- name: Fedora
-  versions:
-  - all
-- name: Debian
-  versions:
-  - all
+  platforms:
+    - name: Debian
+      versions:
+        - all
+    - name: Fedora
+      versions:
+        - all
 
 dependencies: []
   # List your role dependencies here, one per line. Be sure to remove the '[]' above,
