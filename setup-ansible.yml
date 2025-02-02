@@ -1,0 +1,15 @@
+---
+- name: Setup ansible? (probably will do this when i setup my rpi from scratch.)
+while this file will be empty for a bit, this is what i  would wanna do with it.
+
+so with a new host i would just install ansible-core.
+but also need passlib as a pip package for the init-setup, but also install collections (not sure if these are auto downloaded now)
+Technically i can then setup the system initially, but ansible-navigator would be missing.
+The config is there but the pip stuff not, its a bit annoying how to use navigator outside of rhel eco system, so i would addtional need to
+
+install with apt libonig-dev
+python3 -m venv ansible-navigator-venv
+pip install ansible-navigator
+source ansible-navigator-venv/bin/activate # sigh
+
+then a start point is nicely setup.
