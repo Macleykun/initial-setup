@@ -1,7 +1,7 @@
 ---
 dependencies:
-  - ansible.posix: "*" # latest
-  - community.general: "*" # latest
+  - ansible.posix
+  - community.general
 
 galaxy_info:
   author: Macley
