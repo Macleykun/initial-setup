@@ -1,7 +1,12 @@
+---
+dependencies:
+  - ansible.posix: "*" # latest
+  - community.general: "*" # latest
+
 galaxy_info:
   author: Macley
   description: Setup a Fedora and Debian server with users (and their groups, shells and public keys), userfriendly vimrc config, secure ssh and configure default best practises for host firewall, auto apt updating and cool motd!
-
+  role_name: initial-setup
   license: MIT
 
   min_ansible_version: 2.16 # I had to because you want to support python3.12 default linux hosts right?
@@ -13,7 +18,3 @@ galaxy_info:
     - name: Fedora
       versions:
         - all
-
-dependencies:
-  - ansible.posix: "*" # latest
-  - community.general: "*" # latest
