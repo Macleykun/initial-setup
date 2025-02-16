@@ -30,8 +30,7 @@ if [[ "${USER}" != "root" ]]; then
           processes=$(ps -e --no-headers | wc -l)
           ip=$(ip -4 a show scope global | awk '/inet/ {print $2; exit}')
           ipv6=$(ip -6 a show scope global | awk '/inet/ {print $2; exit}')
-          #packages=$(rpm -qa | wc -l)
-          packages="idk"
+          packages=$(rpm -a | wc -l)
 
           #updates=$(head -n1 /etc/update-motd.d/pkg.stats)
           #secupdates=$(tail -n1 /etc/update-motd.d/pkg.stats)
