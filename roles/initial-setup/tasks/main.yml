@@ -158,6 +158,7 @@
   ansible.posix.firewalld:
     zone: public
     immediate: true
+    offline: true
     permanent: true
     state: enabled
     service: ssh
@@ -195,3 +196,4 @@
   ansible.builtin.import_tasks:
     file: "tasks/motd.yml"
   tags: setup_motd
+  when: ansible_distribution != "Rocky"
