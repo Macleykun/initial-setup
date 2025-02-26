@@ -53,7 +53,7 @@ if [[ "${USER}" != "root" ]]; then
 
         # Check if there are updates
         echo
-        echo "Last time updates were ran: $(dnf history list | grep -m 1 -i upgrade | awk '{print $4}')"
+        echo "Last time updates were ran: $(dnf history list | grep -m 1 -i "upgrade  " | awk '{print $4}')"
 
         # Check if a reboot is needed
         #needs-restarting -r
