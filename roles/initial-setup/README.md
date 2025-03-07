@@ -59,4 +59,4 @@ If used in a bigger play, it's best to execute only the tags and therefore you f
 Author Information
 ------------------
 
-Made by the Mac himself. Yeah i know that doesn't really spark confidence, reliance nor competence does it?
+Made by the Mac himself. Yeah i know that doesn't really spark confidence, reliance, nor competence does it?
