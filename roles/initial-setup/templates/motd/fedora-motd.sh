@@ -41,7 +41,7 @@ if [[ "${USER}" != "root" ]]; then
           printf "Memory Usage:\t%s\tIP Address:\t%s\n" "$memory_usage" "$ip"
           if [[ $ipv6 == "" ]]
           then
-            printf "Usage On /:\t%s\tIPv6 Addres:\tNo ipv6 address found\n" "$root_usage"
+            printf "Usage On /:\t%s\tIPv6 Address:\tNo ipv6 address found\n" "$root_usage"
           else
             printf "Use %s:\t%s\tIPv6 Addres:\t%s\n" "$name_highest_usage" "$percentage_highest_usage" "$ipv6"
           fi
