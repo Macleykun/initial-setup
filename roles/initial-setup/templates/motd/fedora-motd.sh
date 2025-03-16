@@ -39,9 +39,13 @@ if [[ "${USER}" != "root" ]]; then
           echo -e "\e[4mSystem information as of: $date\e[0m"
           printf "System Load:\t%s/%s\tSystem Uptime:\t%s\n" "$cpu_usage" "$cpu_count" "$uptime"
           printf "Memory Usage:\t%s\tIP Address:\t%s\n" "$memory_usage" "$ip"
-          if [[ $ipv6 == "" ]]
+          if [[ $ipv6 == "" ]];
           then
-            printf "Usage On /:\t%s\tIPv6 Address:\tNo ipv6 address found\n" "$root_usage"
+            ipv6="None"
+          fi
+          if [[ $name_highest_usage == "/" ]]
+          then
+            printf "Use %s:\t\t%s\tIPv6 Address:\t%s\n" "$name_highest_usage" "$percentage_highest_usage" "$ipv6"
           else
             printf "Use %s:\t%s\tIPv6 Address:\t%s\n" "$name_highest_usage" "$percentage_highest_usage" "$ipv6"
           fi
