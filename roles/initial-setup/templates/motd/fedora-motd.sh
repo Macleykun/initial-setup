@@ -30,7 +30,7 @@ if [[ "${USER}" != "root" ]]; then
           processes=$(ps -e --no-headers | wc -l)
           ip=$(ip -4 a show scope global | awk '/inet/ {print $2; exit}')
           ipv6=$(ip -6 a show scope global | awk '/inet/ {print $2; exit}')
-          packages=$(rpm -a | wc -l)
+          packages=$(rpm -qa | wc -l)
 
           #updates=$(head -n1 /etc/update-motd.d/pkg.stats)
           #secupdates=$(tail -n1 /etc/update-motd.d/pkg.stats)
@@ -43,7 +43,7 @@ if [[ "${USER}" != "root" ]]; then
           then
             printf "Usage On /:\t%s\tIPv6 Address:\tNo ipv6 address found\n" "$root_usage"
           else
-            printf "Use %s:\t%s\tIPv6 Addres:\t%s\n" "$name_highest_usage" "$percentage_highest_usage" "$ipv6"
+            printf "Use %s:\t%s\tIPv6 Address:\t%s\n" "$name_highest_usage" "$percentage_highest_usage" "$ipv6"
           fi
           printf "Local Users:\t%s\tProcesses:\t%s\n" "$users" "$processes"
           printf "Packages rpm:\t%s\tSession fortune:\ \n\n" "$packages"
