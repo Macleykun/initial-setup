@@ -49,9 +49,9 @@ else
   fi
   if [[ $name_highest_usage == "/" ]]
   then
-    printf "Use %s:\t\t%s\tIPv6 Addres:\t%s\n" "$name_highest_usage" "$percentage_highest_usage" "$ipv6"
+    printf "Use %s:\t\t%s\tIPv6 Address:\t%s\n" "$name_highest_usage" "$percentage_highest_usage" "$ipv6"
   else
-    printf "Use %s:\t%s\tIPv6 Addres:\t%s\n" "$name_highest_usage" "$percentage_highest_usage" "$ipv6"
+    printf "Use %s:\t%s\tIPv6 Address:\t%s\n" "$name_highest_usage" "$percentage_highest_usage" "$ipv6"
   fi
   printf "Local Users:\t%s\tProcesses:\t%s\n" "$users" "$processes"
   printf "Packages dpkg:\t%s\tSession fortune:\ \n\n" "$packages"
