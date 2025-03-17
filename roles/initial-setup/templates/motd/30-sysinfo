@@ -12,7 +12,7 @@ else
   date=$(date)
 
   # We use df to display the filesystems and use awk to get the usage and path and reverse sort so the top line is the fullest
-  highest_usage_full=$(df | awk 'NR>1 {print $5 " " $6 | "sort -nr -k1"}' | head -n1)
+  highest_usage_full=$(df -x devtmpfs -x tmpfs -x overlay -x evivarfs | awk 'NR>1 {print $5 " " $6 | "sort -nr -k1"}' | head -n1)
   name_highest_usage=$(echo $highest_usage_full | awk '{print $2}')
   percentage_highest_usage=$(echo $highest_usage_full | awk '{print $1}')
 
