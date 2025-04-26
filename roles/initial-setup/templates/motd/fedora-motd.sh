@@ -27,7 +27,7 @@ if [[ "${USER}" != "root" ]]; then
 
           # Try to display the amount of uptime in minutes, if over 59 minutes show amount of hours, and after 23 hours show amount of days. However it now shows the 5 minutes as 5 hours...
           uptime=$(uptime | sed -E 's/^[^,]*up *//; s/, *[[:digit:]]* users.*//; s/min/minutes/; s/([[:digit:]]+):0?([[:digit:]]+)/\1 hours, \2 minutes/'| awk '{print $1,$2}' | tr -d ,)
-          processes=$(ps -e --no-headers | wc -l)
+          processes=$(ls -d /proc/[1-9]* | wc -l)
           ip=$(ip -4 a show scope global | awk '/inet/ {print $2; exit}')
           ipv6=$(ip -6 a show scope global | awk '/inet/ {print $2; exit}')
           packages=$(rpm -qa | wc -l)
