@@ -164,6 +164,8 @@
     service: ssh
   notify: Reload firewalld
   when: ansible_os_family == "RedHat"
+  vars:
+    ansible_python_interpreter: auto_silent
   tags: setup_ssh
 
 - name: Allow outgoing traffic
