@@ -75,7 +75,7 @@
     group: "root"
   tags: setup_users
 
-- name: Create personal authorized_keys folder
+- name: Create personal authorized_keys folder with user supplied ssh pub keys
   ansible.builtin.lineinfile:
     line: "{{ item.1 }}" # The task looks so confulated because a user can have more pub keys
     dest: "/home/{{ item.0.username }}/.ssh/authorized_keys"
