@@ -52,6 +52,15 @@
   when: ansible_os_family == "Debian"
   tags: setup_users
 
+- name: Make sure vim and sudo are present
+  ansible.builtin.package:
+    name:
+      - sudo # Handy to have if you use Debian
+      - vim
+      #- ssh-askpass # Not sure if this is really needed?
+    state: present
+  tags: setup_users
+
 - name: Setup .vimrc
   ansible.builtin.get_url:
     url: https://gist.githubusercontent.com/Macleykun/a551d8b0a05c9a4fe96962ed364ab929/raw/9b15c47816c6916b51126c9bb99595495e365223/.vimrc 
