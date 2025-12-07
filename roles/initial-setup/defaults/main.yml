@@ -1,4 +1,4 @@
 ---
 motd_type: Alligator2
 change_hostname: False
-ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+ansible_ssh_common_args: '-o StrictHostKeyChecking=yes'

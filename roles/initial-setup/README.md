@@ -2,7 +2,19 @@ initial-setup
 =========
 
 Set's up users, admins, keys and ssh so that ansible can be used with a key instead of password.
-Maybe one day if using some sort of portable ansible-navigator/playbook that it can also install and configure a system wide one.
+
+You need to do these steps beforehand on the control node/location you run playbooks from:
+
+```bash
+apt install sudo ansible -y
+```
+
+Optionally, in the cloned repo you can set your become password like so:
+
+```bash
+vim .becomepass # Add your pass now
+chmod 0400 .becomepass
+```
 
 Role Variables
 --------------
@@ -32,7 +44,7 @@ kliko ansible_host=in.valid.ip.addr motd_type=kliko
 Example Playbook
 ----------------
 
-If used in a bigger play, it's best to execute only the tags and therefore you flushing the handlers is needed (i think)
+If used in a bigger play, it's best to execute only the tags or role tag.
 
 ```yaml
 - name: Initial system setup
@@ -40,7 +52,7 @@ If used in a bigger play, it's best to execute only the tags and therefore you f
   gather_facts: True
   hosts: fqdn.domain.ext
   vars:
-    ansible_ssh_common_args: '-o StrictHostKeyChecking=no' # Optional by default the hostkey won't be checked
+    #ansible_ssh_common_args: '-o StrictHostKeyChecking=no' # Optional by default the hostkey will be checked
     change_hostname: False # Optional by default False
     administrators:
       - username: macley
@@ -54,9 +66,19 @@ If used in a bigger play, it's best to execute only the tags and therefore you f
     - name: Initial Ansible setup
       ansible.builtin.import_role:
         role: initial-setup
+      tags: init-setup
 ```
 
-Author Information
-------------------
+You can then run the playbook like so: `ansible-playbook init-setup.yml`
 
-Made by the Mac himself. Yeah i know that doesn't really spark confidence, reliance, nor competence does it?
+Just handy to know
+----------------
+
+If you get a hostkey checking issues, do this (assuming you have the private key, else just use password). It's assumed you want to connect to the localhost, but change the ip to the node you're connecting to.
+
+`ssh -i ~/.ssh/id_ed25519_ansiblesetup $USER@127.0.0.1`
+
+You can also configure the requirements.yml file if you ever need to keep track of dependencies!
+
+
+And if you know a playbook will fail because of migration, make sure to append ` --force-handlers` as then everything that needs to be restarted will be!
