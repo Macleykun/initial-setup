@@ -52,11 +52,12 @@ tails ansible_host=in.valid.ip.addr motd_type=Tailsl
 
 You can remove both variables, but motd_type will fall back to use the alligator2 font and withoud the ansible_host you must make the name be resolved to an ip yourself!
 
+By default we check the hostkey, if you haven't. Please login with ssh once, accept the fingerprint and disconnect before you run the ansible playbook!
 
 (-k for password auth, first time)(--private-key="~/.ssh/id_ed25519_ansiblesetup.old" for custom private key auth)
 
 ```bash
-ansible-playbook init-setup.yml -l hostname
+ansible-playbook init-setup.yml -l hostname -k # Assuming you want to use ssh login
 ```
 
 ## How to quickly see all the facts:
