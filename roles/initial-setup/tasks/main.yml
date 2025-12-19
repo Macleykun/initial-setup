@@ -5,6 +5,27 @@
   when: change_hostname
   tags: change_hostname
 
+- name: Ensure localhost and hostname mappings exist in /etc/hosts
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    regexp: "^{{ item.ip | regex_escape() }}\\s+"
+    line: "{{ item.ip }} {{ item.names | join(' ') }}"
+    state: present
+  loop:
+    - ip: "127.0.0.1"
+      names:
+        - "localhost"
+        - "{{ ansible_facts.hostname | default(inventory_hostname) }}"
+    - ip: "::1"
+      names:
+        - "localhost"
+        - "{{ ansible_facts.hostname | default(inventory_hostname) }}"
+    - ip: "127.0.1.1"
+      names:
+        - "{{ ansible_facts.hostname | default(inventory_hostname) }}"
+  when: change_hostname
+  tags: change_hostname
+
 - name: Add default Administrators
   ansible.builtin.user:
     name: "{{ item.username }}"
