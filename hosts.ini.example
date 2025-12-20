@@ -2,3 +2,4 @@ fqdn.domain.ext
 shortname ansible_host=in.valid.ip.addr
 tails ansible_host=in.valid.ip.addr motd_type=Tails
 kliko ansible_host=in.valid.ip.addr motd_type=kliko
+kliko ansible_host=in.valid.ip.addr motd_type=Sonic
